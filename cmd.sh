@@ -16,9 +16,9 @@ git commit -m "$comment"
 echo
 echo
 echo '---  git push -u origin source --------------'
-git push -u origin source
+git push -u origin master
 
 
 echo
 echo
-echo '------ All operations excute end.------------'cho $time
+echo '------ All operations excute end.------------' #echo $time

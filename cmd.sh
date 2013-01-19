@@ -1,5 +1,5 @@
 t=`date +%Y/%m/%d-%X`
-comment="commit time:$t"
+comment="commit at:$t"
 
 #echo $comment
 
@@ -9,16 +9,17 @@ git add .
 echo
 echo
 echo "--- git commit -m $comment -------"
-#echo "$comment"
 git commit -m "$comment"
 
 
 echo
 echo
-echo '---  git push -u origin source --------------'
+echo '---  git push -u origin master --------------'
 git push -u origin master
 
 
 echo
 echo
-echo '------ All operations excute end.------------' #echo $time
+echo '------ All operations excute end.------------' 
+
+#echo $time

@@ -1,0 +1,7 @@
+2011-11-24 Upgrade to V0.2.1 Changes:
+	1. 加入多集群支持，集群间的准实时同步
+	2. 集群流量在线分配
+	3. UpdateServer支持一主多备, 备都可以支持读服务, 只有主支持写服务, 主备间的读流量在线分配
+	4. UpdateServer内存配置方法修改
+	5. ChunkServer加入同步预读支持
+	6. 若干bug fix.

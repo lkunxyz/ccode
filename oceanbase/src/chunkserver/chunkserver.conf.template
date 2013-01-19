@@ -1,0 +1,42 @@
+[public]
+pid_file = ./log/chunk.pid
+log_file = ./log/chunk.log
+log_level = info
+
+[chunk_server]
+dev_name = bond0
+port = 2600
+task_queue_size = 1000  
+task_thread_count = 50
+max_migrate_task_count=1
+max_sstable_size = 268435456
+
+datadir_path = /data
+application_name = collect   
+network_timeout= 1000000
+merge_timeout=3000000
+
+lease_check_interval=5000000
+retry_times=3
+migrate_band_limit_kbps=51200
+
+merge_mem_limit=67108864
+#merge_thread_per_disk=1
+#reserve_sstable_copy=2
+merge_load_threshold_high=16
+merge_threshold_request_high=3000
+max_merge_thread_num=10
+#0 means buffered io
+#>0 means dio
+write_sstable_io_type=0
+[memory_cache]
+block_cache_memsize_mb = 4096
+file_info_cache_max_cache_num = 4096
+
+block_index_cache_memsize_mb = 512
+
+join_cache_memsize_mb=5120
+
+[root_server]
+vip = 10.1.1.1
+port=2500

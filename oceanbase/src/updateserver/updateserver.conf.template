@@ -1,0 +1,90 @@
+[public]
+log_file = ./log/updateserver.log
+pid_file = ./log/updateserver.pid
+log_level = info
+
+[update_server]
+vip = 10.1.1.2
+port = 2700
+ups_inner_port = 1111
+dev_name = bond0
+app_name = collect
+log_size_mb = 64
+log_dir_path = ./ups_commitlog
+fetch_schema_times = 10
+fetch_schema_timeout_us = 3000000
+resp_root_times = 10
+resp_root_timeout_us = 1000000
+log_sync_type = 1
+replay_checksum_flag = 0
+
+read_thread_count = 14
+read_task_queue_size = 1000
+write_task_queue_size = 1000
+log_task_queue_size = 1000
+
+write_group_commit_num = 1024
+
+log_sync_limit_kb = 51200
+replay_wait_time_us = 5000
+state_check_period_us = 500000
+
+#总内存使用上限 超过后不再分配 单位GB
+total_memory_limit = 44
+#所有memtable内存使用上限 超过后不再分配 单位GB
+table_memory_limit = 36
+
+lease_interval_us = 15000000
+lease_reserved_time_us = 10000000
+lease_on = 1
+
+log_sync_timeout_us = 500000
+log_sync_retry_times = 2
+
+max_thread_memblock_num = 10
+
+packet_max_timewait = 1000000
+
+transaction_process_time_warning_us = 1000000
+
+#sstable文件存储的根目录 必须是相对目录
+store_root = ./data
+#store_root下raid目录名的匹配式
+raid_regex = ^raid[0-9]+$
+#raid目录下指向磁盘实际目录的软链接的名字匹配式
+dir_regex = ^store[0-9]+$
+
+#读取sstable的blockcache的大小 单位MB
+blockcache_size_mb = 1024
+#读取sstable的blockindex cache的大小单位 MB
+blockindex_cache_size_mb = 100
+
+#活跃memtable内存使用上限 超过后执行一次冻结 单位GB
+active_mem_limit_gb = 10
+#sstable被加载到内存的最长时间 超过这个时间的sstable被卸载 文件被改名到trash目录 单位秒
+sstable_time_limit_s = 604800
+#每天定时执行升级主版本号的冻结操作的时间 格式为%H:%M 非法格式为不执行
+major_freeze_duty_time = 01:00
+#两次升级主版本号时间差的最小值 如果小于这个值则执行major freze失败
+min_major_freeze_interval_s = 36000
+
+#写sstable的压缩方法动态库名
+sstable_compressor_name = lzo_1.0
+#写sstable的block的大小 单位Byte
+sstable_block_size = 4096
+
+#Memtable中当一行中的cell数量超过这值时就执行一次合并
+max_row_cell_num = 128
+
+#Memtable可用内存小于这个值时开始drop frozen的table
+table_available_warn_size_gb = 10
+#Memtable可用内存小于这个值是开始drop frozen的table 并打印error日志
+table_available_error_size_gb = 5
+
+#sstable cache预热时间(单位秒 0表示不预热 最小10秒 最大1800秒)
+warm_up_time_s = 600
+
+[root_server]
+vip = 10.1.1.1
+port = 2500
+

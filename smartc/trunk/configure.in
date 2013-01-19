@@ -1,0 +1,79 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.59)
+AC_INIT(smartcache, 0.1, tangtang@sourceforge.net)
+AC_CONFIG_SRCDIR([src/server.c])
+AC_CONFIG_HEADER([src/config.h])
+AM_INIT_AUTOMAKE
+
+AC_PREFIX_DEFAULT(/usr/local/smartc)
+# Checks for programs.
+AC_PROG_CC
+
+# Checks for libraries.
+
+# Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h netdb.h netinet/in.h \
+				  stdlib.h string.h strings.h sys/socket.h \
+				  sys/time.h unistd.h zlib.h bzlib.h lua.h luaconf.h \
+				  lualib.h lauxlib.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_OFF_T
+AC_TYPE_SIZE_T
+AC_HEADER_TIME
+AC_STRUCT_TM
+
+# Checks for library functions.
+AC_FUNC_MALLOC
+AC_FUNC_MKTIME
+AC_FUNC_REALLOC
+AC_FUNC_SETVBUF_REVERSED
+AC_FUNC_STAT
+AC_FUNC_STRFTIME
+AC_FUNC_VPRINTF
+AC_CHECK_FUNCS([gethostbyname gettimeofday memchr memmove \
+				memset socket strcasecmp strchr strdup strerror \
+				strncasecmp strndup gettimeofday clock])
+
+USE_LINUX_AIO=0
+USE_POSIX_AIO=0
+
+AC_ARG_ENABLE([linux-aio],
+	[AS_HELP_STRING([--enable-linux-aio],[The asynchronous I/O system calls first appeared in Linux 2.5, August 2002])],
+	[USE_LINUX_AIO=$enableval],
+	[USE_LINUX_AIO=no])
+
+
+AC_ARG_ENABLE([posix-aio],
+	[AS_HELP_STRING([--enable-posix-aio],[Posix aio from gnu.])],
+	[USE_POSIX_AIO=$enbleval],
+	[USE_POSIX_AIO=yes])
+
+if test $USE_LINUX_AIO == "yes"; then
+	AM_CONDITIONAL(USE_LINUX_AIO, true)
+	AC_DEFINE([USE_LINUX_AIO],[1],[Define if --enable-linux-aio])
+	USE_POSIX_AIO=no
+else 
+	AM_CONDITIONAL(USE_LINUX_AIO, false)
+	AC_DEFINE([USE_LINUX_AIO],[0],[Define if --disable-linux-aio])
+fi
+
+if test $USE_POSIX_AIO == "yes"; then
+	AM_CONDITIONAL(USE_POSIX_AIO, true)
+	AC_DEFINE([USE_POSIX_AIO],[1],[Define if --enable-posix-aio])
+else 
+	AM_CONDITIONAL(USE_POSIX_AIO, false)
+	AC_DEFINE([USE_POSIX_AIO],[1],[Define if --enable-posix-aio])
+fi	
+
+AC_MSG_CHECKING(for linux aio)
+AC_MSG_RESULT([$USE_LINUX_AIO])
+AC_MSG_CHECKING(for posix aio)
+AC_MSG_RESULT([$USE_POSIX_AIO])
+
+AC_OUTPUT([Makefile src/Makefile])

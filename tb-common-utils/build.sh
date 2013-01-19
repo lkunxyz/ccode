@@ -20,9 +20,11 @@ if [ -z "$1" -o "$1" = 'make' ]; then
 	CXXFLAGS='-O3 -Wall -D_NO_EXCEPTION' ./configure
 	make -j 8
 fi
+
 if [ -z "$1" -o "$1" = 'install' ]; then 
 	make install
 fi
+
 if [ "$1" = 'clean' ]; then
 	make clean distclean
 	sh autogen.sh clean
@@ -34,9 +36,11 @@ if [ -z "$1" -o "$1" = 'make' ]; then
 	./configure
 	make -j 8
 fi
+
 if [ -z "$1" -o "$1" = 'install' ]; then 
 	make install
 fi
+
 if [ "$1" = 'clean' ]; then
 	make clean distclean
 	sh autogen.sh clean

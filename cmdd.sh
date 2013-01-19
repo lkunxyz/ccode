@@ -1,4 +1,4 @@
-time = `date +%Y/%m/%d-%X`
+time=`date +%Y/%m/%d-%X`
 
 
 
@@ -19,5 +19,5 @@ git push -u origin master
 
 echo
 echo
-echo '------ All operations excute end.------------'cho $time
+echo '------ All operations excute end.------------'echo $time
 

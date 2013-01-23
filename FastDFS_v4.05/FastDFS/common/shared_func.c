@@ -1171,6 +1171,7 @@ void long2buff(int64_t n, char *buff)
 	*p++ = n & 0xFF;
 }
 
+//xuliehua  serialize char*
 int64_t buff2long(const char *buff)
 {
 	unsigned char *p;

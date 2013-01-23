@@ -92,8 +92,9 @@ void recv_notify_read(int sock, short event, void *arg)
 		if (incomesock < 0)
 		{
 			struct timeval tv;
-                        tv.tv_sec = 1;
-                        tv.tv_usec = 0;
+            tv.tv_sec = 1;
+            tv.tv_usec = 0;
+			
 			pThreadData = g_thread_data + (-1 * incomesock - 1) % \
 					g_work_threads;
 			event_base_loopexit(pThreadData->ev_base, &tv);
@@ -102,6 +103,7 @@ void recv_notify_read(int sock, short event, void *arg)
 
 		client_addr = getPeerIpaddr(incomesock, \
 				szClientIp, IP_ADDRESS_SIZE);
+		
 		if (g_allow_ip_count >= 0)
 		{
 			if (bsearch(&client_addr, g_allow_ip_addrs, \
@@ -137,7 +139,8 @@ void recv_notify_read(int sock, short event, void *arg)
 		pThreadData = g_thread_data + incomesock % g_work_threads;
 
 		strcpy(pTask->client_ip, szClientIp);
-	
+
+	    //set the read event
 		event_set(&pTask->ev_read, incomesock, EV_READ, \
 				client_sock_read, pTask);
 		if (event_base_set(pThreadData->ev_base, &pTask->ev_read) != 0)
@@ -150,6 +153,8 @@ void recv_notify_read(int sock, short event, void *arg)
 			continue;
 		}
 
+
+		//set the write event
 		event_set(&pTask->ev_write, incomesock, EV_WRITE, \
 				client_sock_write, pTask);
 		if ((result=event_base_set(pThreadData->ev_base, \
@@ -225,7 +230,7 @@ static void client_sock_read(int sock, short event, void *arg)
 	{
 		if (pTask->length == 0) //recv header
 		{
-			recv_bytes = sizeof(TrackerHeader) - pTask->offset;
+			recv_bytes = sizeof(TrackerHeader) - pTask->offset;  
 		}
 		else
 		{

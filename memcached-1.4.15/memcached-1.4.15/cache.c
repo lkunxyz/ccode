@@ -18,7 +18,8 @@ const int initial_pool_size = 64;
 
 cache_t* cache_create(const char *name, size_t bufsize, size_t align,
                       cache_constructor_t* constructor,
-                      cache_destructor_t* destructor) {
+                      cache_destructor_t* destructor) 
+{
     cache_t* ret = calloc(1, sizeof(cache_t));
     char* nm = strdup(name);
     void** ptr = calloc(initial_pool_size, sizeof(void*));
@@ -45,7 +46,8 @@ cache_t* cache_create(const char *name, size_t bufsize, size_t align,
     return ret;
 }
 
-static inline void* get_object(void *ptr) {
+static inline void* get_object(void *ptr) 
+{
 #ifndef NDEBUG
     uint64_t *pre = ptr;
     return pre + 1;
@@ -54,28 +56,34 @@ static inline void* get_object(void *ptr) {
 #endif
 }
 
-void cache_destroy(cache_t *cache) {
-    while (cache->freecurr > 0) {
+void cache_destroy(cache_t *cache) 
+{
+    while (cache->freecurr > 0) 
+	{
         void *ptr = cache->ptr[--cache->freecurr];
         if (cache->destructor) {
             cache->destructor(get_object(ptr), NULL);
         }
         free(ptr);
     }
+	
     free(cache->name);
     free(cache->ptr);
     pthread_mutex_destroy(&cache->mutex);
     free(cache);
 }
 
-void* cache_alloc(cache_t *cache) {
+void* cache_alloc(cache_t *cache) 
+{
     void *ret;
     void *object;
+	
     pthread_mutex_lock(&cache->mutex);
     if (cache->freecurr > 0) {
         ret = cache->ptr[--cache->freecurr];
         object = get_object(ret);
-    } else {
+    } 
+	else {
         object = ret = malloc(cache->bufsize);
         if (ret != NULL) {
             object = get_object(ret);
@@ -103,7 +111,8 @@ void* cache_alloc(cache_t *cache) {
     return object;
 }
 
-void cache_free(cache_t *cache, void *ptr) {
+void cache_free(cache_t *cache, void *ptr) 
+{
     pthread_mutex_lock(&cache->mutex);
 
 #ifndef NDEBUG
@@ -125,9 +134,11 @@ void cache_free(cache_t *cache, void *ptr) {
     }
     ptr = pre;
 #endif
+
     if (cache->freecurr < cache->freetotal) {
         cache->ptr[cache->freecurr++] = ptr;
-    } else {
+    }
+	else {
         /* try to enlarge free connections array */
         size_t newtotal = cache->freetotal * 2;
         void **new_free = realloc(cache->ptr, sizeof(char *) * newtotal);
@@ -135,7 +146,8 @@ void cache_free(cache_t *cache, void *ptr) {
             cache->freetotal = newtotal;
             cache->ptr = new_free;
             cache->ptr[cache->freecurr++] = ptr;
-        } else {
+        } 
+		else {
             if (cache->destructor) {
                 cache->destructor(ptr, NULL);
             }

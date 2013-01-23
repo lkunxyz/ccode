@@ -230,7 +230,7 @@ int avl_tree_insert(AVLTreeInfo *tree, void *data)
 {
 	int taller;
 
-	taller = 0;
+	taller = 0;  //int taller = 0;
 	return avl_tree_insert_loop(tree->compare_func, &(tree->root), \
 				data, &taller);
 }

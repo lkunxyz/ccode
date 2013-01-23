@@ -85,8 +85,7 @@ int main(int argc, char *argv[])
 	ScheduleEntry scheduleEntries[SCHEDULE_ENTRIES_COUNT];
 	ScheduleArray scheduleArray;
 
-	if (argc < 2)
-	{
+	if (argc < 2){
 		printf("Usage: %s <config_file>\n", argv[0]);
 		return 1;
 	}
@@ -221,24 +220,6 @@ int main(int argc, char *argv[])
 	}
 
 #if defined(DEBUG_FLAG)
-/*
-#if defined(OS_LINUX)
-	memset(&act, 0, sizeof(act));
-	sigemptyset(&act.sa_mask);
-        act.sa_sigaction = sigSegvHandler;
-        act.sa_flags = SA_SIGINFO;
-        if (sigaction(SIGSEGV, &act, NULL) < 0 || \
-        	sigaction(SIGABRT, &act, NULL) < 0)
-	{
-		logCrit("file: "__FILE__", line: %d, " \
-			"call sigaction fail, errno: %d, error info: %s", \
-			__LINE__, errno, STRERROR(errno));
-		logCrit("exit abnormally!\n");
-		return errno;
-	}
-#endif
-*/
-
 	memset(&act, 0, sizeof(act));
 	sigemptyset(&act.sa_mask);
 	act.sa_handler = sigDumpHandler;

@@ -85,6 +85,7 @@ int main(int argc, char *argv[])
 	int sock;
 	pthread_t schedule_tid;
 	struct sigaction act;
+	
 	ScheduleEntry scheduleEntries[SCHEDULE_ENTRIES_MAX_COUNT];
 	ScheduleArray scheduleArray;
 

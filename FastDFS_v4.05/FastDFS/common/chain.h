@@ -26,6 +26,7 @@ typedef struct
 	int type;
 	ChainNode *head;
 	ChainNode *tail;
+	
 	FreeDataFunc freeDataFunc;
 	CompareFunc compareFunc;
 } ChainList;

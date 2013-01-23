@@ -94,11 +94,11 @@ int tracker_service_init()
 
 	g_tracker_thread_count = 0;
 	pDataEnd = g_thread_data + g_work_threads;
+	
 	for (pThreadData=g_thread_data; pThreadData<pDataEnd; pThreadData++)
 	{
 		pThreadData->ev_base = event_base_new();
-		if (pThreadData->ev_base == NULL)
-		{
+		if (pThreadData->ev_base == NULL){
 			result = errno != 0 ? errno : ENOMEM;
 			logError("file: "__FILE__", line: %d, " \
 				"event_base_new fail.", __LINE__);
@@ -141,8 +141,7 @@ int tracker_service_init()
 		}
 		else
 		{
-			if ((result=pthread_mutex_lock(&tracker_thread_lock)) != 0)
-			{
+			if ((result=pthread_mutex_lock(&tracker_thread_lock)) != 0){
 				logError("file: "__FILE__", line: %d, " \
 					"call pthread_mutex_lock fail, " \
 					"errno: %d, error info: %s", \
@@ -257,21 +256,19 @@ static void *work_thread_entrance(void* arg)
 	{
 		event_set(&ev_notify, pThreadData->pipe_fds[0], \
 			EV_READ | EV_PERSIST, recv_notify_read, NULL);
-		if ((result=event_base_set(pThreadData->ev_base, &ev_notify)) != 0)
-		{
+		
+		if ((result=event_base_set(pThreadData->ev_base, &ev_notify)) != 0){
 			logCrit("file: "__FILE__", line: %d, " \
 				"event_base_set fail.", __LINE__);
 			break;
 		}
-		if ((result=event_add(&ev_notify, NULL)) != 0)
-		{
+		if ((result=event_add(&ev_notify, NULL)) != 0){
 			logCrit("file: "__FILE__", line: %d, " \
 				"event_add fail.", __LINE__);
 			break;
 		}
 
-		while (g_continue_flag)
-		{
+		while (g_continue_flag){
 			event_base_loop(pThreadData->ev_base, 0);
 		}
 	} while (0);

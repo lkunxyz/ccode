@@ -55,8 +55,7 @@ static int check_and_mk_log_dir(const char *base_path)
 
 int log_init()
 {
-	if (g_log_context.log_buff != NULL)
-	{
+	if (g_log_context.log_buff != NULL){
 		return 0;
 	}
 
@@ -84,8 +83,7 @@ int log_init_ex(LogContext *pContext)
 	}
 	pContext->pcurrent_buff = pContext->log_buff;
 
-	if ((result=init_pthread_lock(&(pContext->log_thread_lock))) != 0)
-	{
+	if ((result=init_pthread_lock(&(pContext->log_thread_lock))) != 0){
 		return result;
 	}
 

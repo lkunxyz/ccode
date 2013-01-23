@@ -1,6 +1,7 @@
 /* -*- Mode: C; tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 #ifndef CACHE_H
 #define CACHE_H
+
 #include <pthread.h>
 
 #ifdef HAVE_UMEM_H
@@ -46,18 +47,25 @@ typedef void cache_destructor_t(void* obj, void* notused);
 typedef struct {
     /** Mutex to protect access to the structure */
     pthread_mutex_t mutex;
+	
     /** Name of the cache objects in this cache (provided by the caller) */
     char *name;
+	
     /** List of pointers to available buffers in this cache */
     void **ptr;
+	
     /** The size of each element in this cache */
     size_t bufsize;
+	
     /** The capacity of the list of elements */
     int freetotal;
+	
     /** The current number of free elements */
     int freecurr;
+	
     /** The constructor to be called each time we allocate more memory */
     cache_constructor_t* constructor;
+	
     /** The destructor to be called each time before we release memory */
     cache_destructor_t* destructor;
 } cache_t;

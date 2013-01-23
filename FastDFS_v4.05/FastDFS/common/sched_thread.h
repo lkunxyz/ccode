@@ -29,6 +29,7 @@ typedef struct tagScheduleEntry
 
 	/* following are internal fields, do not set manually! */
 	time_t next_call_time;  
+	
 	struct tagScheduleEntry *next;
 } ScheduleEntry;
 

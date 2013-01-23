@@ -327,21 +327,27 @@ extern struct settings settings;
 typedef struct _stritem {
     struct _stritem *next;
     struct _stritem *prev;
+	
     struct _stritem *h_next;    /* hash chain next */
+	
     rel_time_t      time;       /* least recent access */
     rel_time_t      exptime;    /* expire time */
     int             nbytes;     /* size of data */
+	
     unsigned short  refcount;
+	
     uint8_t         nsuffix;    /* length of flags-and-length string */
     uint8_t         it_flags;   /* ITEM_* above */
     uint8_t         slabs_clsid;/* which slab class we're in */
     uint8_t         nkey;       /* key length, w/terminating null and padding */
+	
     /* this odd type prevents type-punning issues when we do
      * the little shuffle to save space when not using CAS. */
     union {
         uint64_t cas;
         char end;
     } data[];
+	
     /* if it_flags & ITEM_CAS we have 8 bytes CAS */
     /* then null-terminated key */
     /* then " flags length\r\n" (no terminating null) */
@@ -371,9 +377,11 @@ typedef struct {
 typedef struct conn conn;
 struct conn {
     int    sfd;
+	
     sasl_conn_t *sasl_conn;
     enum conn_states  state;
     enum bin_substates substate;
+	
     struct event event;
     short  ev_flags;
     short  which;   /** which events were just triggered */
@@ -387,6 +395,7 @@ struct conn {
     char   *wcurr;
     int    wsize;
     int    wbytes;
+	
     /** which state to go into after finishing current write */
     enum conn_states  write_and_go;
     void   *write_and_free; /** free this memory after finishing writing */

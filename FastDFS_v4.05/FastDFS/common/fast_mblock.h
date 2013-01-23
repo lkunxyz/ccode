@@ -18,7 +18,9 @@
 #include "common_define.h"
 #include "chain.h"
 
-/* free node chain */ 
+/*memory block chain*/
+
+/*free node chain */ 
 struct fast_mblock_node
 {
 	struct fast_mblock_node *next;

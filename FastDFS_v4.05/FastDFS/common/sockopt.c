@@ -1282,6 +1282,7 @@ int tcpsetserveropt(int fd, const int timeout)
 #else
 	linger.l_linger = timeout;
 #endif
+
 	if (setsockopt(fd, SOL_SOCKET, SO_LINGER, \
                 &linger, (socklen_t)sizeof(struct linger)) < 0)
 	{

@@ -28,12 +28,15 @@ struct fast_task_info
 	char client_ip[IP_ADDRESS_SIZE];
 	struct event ev_read;
 	struct event ev_write;
+	
 	void *arg;  //extra argument pointer
 	char *data; //buffer for write or recv
+	
 	int size;   //alloc size
 	int length; //data length
 	int offset; //current offset
 	int req_count; //request count
+	
 	struct fast_task_info *next;
 	TaskFinishCallBack finish_callback;
 };
@@ -42,6 +45,7 @@ struct fast_task_queue
 {
 	struct fast_task_info *head;
 	struct fast_task_info *tail;
+	
 	pthread_mutex_t lock;
 	int max_connections;
 	int min_buff_size;

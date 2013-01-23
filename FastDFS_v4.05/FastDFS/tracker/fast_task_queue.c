@@ -21,9 +21,7 @@ struct mpool_chain {
 int task_queue_init(struct fast_task_queue *pQueue)
 {
 	int result;
-
-	if ((result=init_pthread_lock(&(pQueue->lock))) != 0)
-	{
+	if ((result=init_pthread_lock(&(pQueue->lock))) != 0){
 		logError("file: "__FILE__", line: %d, " \
 			"init_pthread_lock fail, errno: %d, error info: %s", \
 			__LINE__, result, STRERROR(result));
@@ -142,48 +140,40 @@ int free_queue_init(const int max_connections, const int min_buff_size, \
 	aligned_min_size = MEM_ALIGN(min_buff_size);
 	aligned_max_size = MEM_ALIGN(max_buff_size);
 	aligned_arg_size = MEM_ALIGN(arg_size);
+	
 	block_size = ALIGNED_TASK_INFO_SIZE + aligned_arg_size;
 	alloc_size = block_size * max_connections;
-	if (aligned_max_size > aligned_min_size)
-	{
+	if (aligned_max_size > aligned_min_size){
 		total_size = alloc_size;
 		g_free_queue.malloc_whole_block = false;
 		max_data_size = 0;
 	}
-	else
-	{
+	else{
 		struct rlimit rlimit_data;
-
-		if (getrlimit(RLIMIT_DATA, &rlimit_data) < 0)
-		{
+		if (getrlimit(RLIMIT_DATA, &rlimit_data) < 0){
 			logError("file: "__FILE__", line: %d, " \
 				"call getrlimit fail, " \
 				"errno: %d, error info: %s", \
 				__LINE__, errno, STRERROR(errno));
 			return errno != 0 ? errno : EPERM;
 		}
-		if (rlimit_data.rlim_cur == RLIM_INFINITY)
-		{
+		if (rlimit_data.rlim_cur == RLIM_INFINITY){
 			max_data_size = 256 * 1024 * 1024;
 		}
-		else
-		{
+		else{
 			max_data_size = rlimit_data.rlim_cur;
-			if (max_data_size > 256 * 1024 * 1024)
-			{
+			if (max_data_size > 256 * 1024 * 1024){
 				max_data_size = 256 * 1024 * 1024;
 			}
 		}
 
-		if (max_data_size >= (block_size + aligned_min_size) * 32)
-		{
+		if (max_data_size >= (block_size + aligned_min_size) * 32){
 			total_size = alloc_size + (int64_t)aligned_min_size * \
 					max_connections;
 			g_free_queue.malloc_whole_block = true;
 			block_size += aligned_min_size;
 		}
-		else
-		{
+		else{
 			total_size = alloc_size;
 			g_free_queue.malloc_whole_block = false;
 			max_data_size = 0;
@@ -207,14 +197,12 @@ int free_queue_init(const int max_connections, const int min_buff_size, \
 	{
 		loop_count = 1;
 		mpool = malloc_mpool(block_size, total_size);
-		if (mpool == NULL)
-		{
+		if (mpool == NULL){
 			return errno != 0 ? errno : ENOMEM;
 		}
 		g_mpool = mpool;
 	}
-	else
-	{
+	else{
 		struct mpool_chain *previous_mpool;
 		int remain_count;
 		int alloc_once;
@@ -398,9 +386,7 @@ int task_queue_push(struct fast_task_queue *pQueue, \
 		struct fast_task_info *pTask)
 {
 	int result;
-
-	if ((result=pthread_mutex_lock(&(pQueue->lock))) != 0)
-	{
+	if ((result=pthread_mutex_lock(&(pQueue->lock))) != 0){
 		logError("file: "__FILE__", line: %d, " \
 			"call pthread_mutex_lock fail, " \
 			"errno: %d, error info: %s", \
@@ -409,12 +395,10 @@ int task_queue_push(struct fast_task_queue *pQueue, \
 	}
 
 	pTask->next = NULL;
-	if (pQueue->tail == NULL)
-	{
+	if (pQueue->tail == NULL){
 		pQueue->head = pTask;
 	}
-	else
-	{
+	else{
 		pQueue->tail->next = pTask;
 	}
 	pQueue->tail = pTask;

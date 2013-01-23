@@ -85,5 +85,6 @@ int daemonize(int nochdir, int noclose)
             }
         }
     }
+	
     return (0);
 }

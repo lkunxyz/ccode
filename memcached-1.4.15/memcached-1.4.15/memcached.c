@@ -3735,7 +3735,8 @@ static enum transmit_result transmit(conn *c) {
     }
 }
 
-static void drive_machine(conn *c) {
+static void drive_machine(conn *c)
+{
     bool stop = false;
     int sfd, flags = 1;
     socklen_t addrlen;
@@ -3746,8 +3747,8 @@ static void drive_machine(conn *c) {
 
     assert(c != NULL);
 
-    while (!stop) {
-
+    while (!stop)
+	{
         switch(c->state) {
         case conn_listening:
             addrlen = sizeof(addr);
@@ -3755,12 +3756,14 @@ static void drive_machine(conn *c) {
                 if (errno == EAGAIN || errno == EWOULDBLOCK) {
                     /* these are transient, so don't log anything */
                     stop = true;
-                } else if (errno == EMFILE) {
+                } 
+				else if (errno == EMFILE) {
                     if (settings.verbose > 0)
                         fprintf(stderr, "Too many open connections\n");
                     accept_new_conns(false);
                     stop = true;
-                } else {
+                } 
+				else {
                     perror("accept()");
                     stop = true;
                 }
@@ -3781,7 +3784,8 @@ static void drive_machine(conn *c) {
                 STATS_LOCK();
                 stats.rejected_conns++;
                 STATS_UNLOCK();
-            } else {
+            } 
+			else {
                 dispatch_conn_new(sfd, conn_new_cmd, EV_READ | EV_PERSIST,
                                      DATA_BUFFER_SIZE, tcp_transport);
             }
@@ -3835,7 +3839,8 @@ static void drive_machine(conn *c) {
             --nreqs;
             if (nreqs >= 0) {
                 reset_cmd_handler(c);
-            } else {
+            } 
+			else {
                 pthread_mutex_lock(&c->thread->stats.mutex);
                 c->thread->stats.conn_yields++;
                 pthread_mutex_unlock(&c->thread->stats.mutex);
@@ -4046,7 +4051,8 @@ static void drive_machine(conn *c) {
     return;
 }
 
-void event_handler(const int fd, const short which, void *arg) {
+void event_handler(const int fd, const short which, void *arg) 
+{
     conn *c;
 
     c = (conn *)arg;
@@ -4132,7 +4138,8 @@ static void maximize_sndbuf(const int sfd) {
 static int server_socket(const char *interface,
                          int port,
                          enum network_transport transport,
-                         FILE *portnumber_file) {
+                         FILE *portnumber_file) 
+{
     int sfd;
     struct linger ling = {0, 0};
     struct addrinfo *ai;
@@ -4159,7 +4166,8 @@ static int server_socket(const char *interface,
         return 1;
     }
 
-    for (next= ai; next; next= next->ai_next) {
+    for (next= ai; next; next= next->ai_next)
+	{
         conn *listen_conn_add;
         if ((sfd = new_socket(next)) == -1) {
             /* getaddrinfo can return "junk" addresses,
@@ -4187,7 +4195,8 @@ static int server_socket(const char *interface,
         setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, (void *)&flags, sizeof(flags));
         if (IS_UDP(transport)) {
             maximize_sndbuf(sfd);
-        } else {
+        } 
+		else {
             error = setsockopt(sfd, SOL_SOCKET, SO_KEEPALIVE, (void *)&flags, sizeof(flags));
             if (error != 0)
                 perror("setsockopt");
@@ -4210,7 +4219,8 @@ static int server_socket(const char *interface,
             }
             close(sfd);
             continue;
-        } else {
+        } 
+		else {
             success++;
             if (!IS_UDP(transport) && listen(sfd, settings.backlog) == -1) {
                 perror("listen()");
@@ -4225,13 +4235,15 @@ static int server_socket(const char *interface,
                     struct sockaddr_in in;
                     struct sockaddr_in6 in6;
                 } my_sockaddr;
+				
                 socklen_t len = sizeof(my_sockaddr);
                 if (getsockname(sfd, (struct sockaddr*)&my_sockaddr, &len)==0) {
                     if (next->ai_addr->sa_family == AF_INET) {
                         fprintf(portnumber_file, "%s INET: %u\n",
                                 IS_UDP(transport) ? "UDP" : "TCP",
                                 ntohs(my_sockaddr.in.sin_port));
-                    } else {
+                    } 
+					else {
                         fprintf(portnumber_file, "%s INET6: %u\n",
                                 IS_UDP(transport) ? "UDP" : "TCP",
                                 ntohs(my_sockaddr.in6.sin6_port));
@@ -4248,7 +4260,8 @@ static int server_socket(const char *interface,
                 dispatch_conn_new(sfd, conn_read, EV_READ | EV_PERSIST,
                                   UDP_READ_BUFFER_SIZE, transport);
             }
-        } else {
+        } 
+		else {
             if (!(listen_conn_add = conn_new(sfd, conn_listening,
                                              EV_READ | EV_PERSIST, 1,
                                              transport, main_base))) {
@@ -4270,7 +4283,8 @@ static int server_sockets(int port, enum network_transport transport,
                           FILE *portnumber_file) {
     if (settings.inter == NULL) {
         return server_socket(settings.inter, port, transport, portnumber_file);
-    } else {
+    } 
+	else {
         // tokenize them and bind to each one of them..
         char *b;
         int ret = 0;
@@ -4694,7 +4708,8 @@ static bool sanitycheck(void) {
     return true;
 }
 
-int main (int argc, char **argv) {
+int main (int argc, char **argv) 
+{
     int c;
     bool lock_memory = false;
     bool do_daemonize = false;
@@ -4702,28 +4717,34 @@ int main (int argc, char **argv) {
     int maxcore = 0;
     char *username = NULL;
     char *pid_file = NULL;
+	
     struct passwd *pw;
     struct rlimit rlim;
+	
     char unit = '\0';
     int size_max = 0;
     int retval = EXIT_SUCCESS;
+	
     /* listening sockets */
     static int *l_socket = NULL;
 
     /* udp socket */
     static int *u_socket = NULL;
+	
     bool protocol_specified = false;
     bool tcp_specified = false;
     bool udp_specified = false;
 
     char *subopts;
     char *subopts_value;
+	
     enum {
         MAXCONNS_FAST = 0,
         HASHPOWER_INIT,
         SLAB_REASSIGN,
         SLAB_AUTOMOVE
     };
+	
     char *const subopts_tokens[] = {
         [MAXCONNS_FAST] = "maxconns_fast",
         [HASHPOWER_INIT] = "hashpower",
@@ -4905,11 +4926,14 @@ int main (int argc, char **argv) {
             protocol_specified = true;
             if (strcmp(optarg, "auto") == 0) {
                 settings.binding_protocol = negotiating_prot;
-            } else if (strcmp(optarg, "binary") == 0) {
+            } 
+			else if (strcmp(optarg, "binary") == 0) {
                 settings.binding_protocol = binary_prot;
-            } else if (strcmp(optarg, "ascii") == 0) {
+            } 
+			else if (strcmp(optarg, "ascii") == 0) {
                 settings.binding_protocol = ascii_prot;
-            } else {
+            } 
+			else {
                 fprintf(stderr, "Invalid value for binding protocol: %s\n"
                         " -- should be one of auto, binary, or ascii\n", optarg);
                 exit(EX_USAGE);
@@ -4921,22 +4945,28 @@ int main (int argc, char **argv) {
                 unit == 'K' || unit == 'M') {
                 optarg[strlen(optarg)-1] = '\0';
                 size_max = atoi(optarg);
+				
                 if (unit == 'k' || unit == 'K')
                     size_max *= 1024;
+				
                 if (unit == 'm' || unit == 'M')
                     size_max *= 1024 * 1024;
                 settings.item_size_max = size_max;
-            } else {
+            } 
+			else {
                 settings.item_size_max = atoi(optarg);
             }
+			
             if (settings.item_size_max < 1024) {
                 fprintf(stderr, "Item max size cannot be less than 1024 bytes.\n");
                 return 1;
             }
+			
             if (settings.item_size_max > 1024 * 1024 * 128) {
                 fprintf(stderr, "Cannot set item size limit higher than 128 mb.\n");
                 return 1;
             }
+			
             if (settings.item_size_max > 1024 * 1024) {
                 fprintf(stderr, "WARNING: Setting item max size above 1MB is not"
                     " recommended!\n"
@@ -4971,7 +5001,8 @@ int main (int argc, char **argv) {
                     fprintf(stderr, "Initial hashtable multiplier of %d is too low\n",
                         settings.hashpower_init);
                     return 1;
-                } else if (settings.hashpower_init > 64) {
+                } 
+				else if (settings.hashpower_init > 64) {
                     fprintf(stderr, "Initial hashtable multiplier of %d is too high\n"
                         "Choose a value based on \"STAT hash_power_level\" from a running instance\n",
                         settings.hashpower_init);
@@ -5011,14 +5042,16 @@ int main (int argc, char **argv) {
      */
     if (settings.inter != NULL && strchr(settings.inter, ',')) {
         settings.num_threads_per_udp = 1;
-    } else {
+    } 
+	else {
         settings.num_threads_per_udp = settings.num_threads;
     }
 
     if (settings.sasl) {
         if (!protocol_specified) {
             settings.binding_protocol = binary_prot;
-        } else {
+        } 
+		else {
             if (settings.binding_protocol != binary_prot) {
                 fprintf(stderr, "ERROR: You cannot allow the ASCII protocol while using SASL.\n");
                 exit(EX_USAGE);
@@ -5028,7 +5061,8 @@ int main (int argc, char **argv) {
 
     if (tcp_specified && !udp_specified) {
         settings.udpport = settings.port;
-    } else if (udp_specified && !tcp_specified) {
+    } 
+	else if (udp_specified && !tcp_specified) {
         settings.port = settings.udpport;
     }
 
@@ -5234,6 +5268,7 @@ int main (int argc, char **argv) {
     /* remove the PID file if we're a daemon */
     if (do_daemonize)
         remove_pidfile(pid_file);
+	
     /* Clean up strdup() call for bind() address */
     if (settings.inter)
       free(settings.inter);
